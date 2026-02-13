@@ -1,6 +1,6 @@
 /**
  * A ListADT represents an ordered, resizable sequence of elements
- * Elements are arranged by position and numbered starting at 0.
+ * Elements are arranged by position and numbered starting at 0
  *
  * A newly created ListADT starts empty with size of 0. The list can
  * grow and shrink as elements are added or removed.
