@@ -1,37 +1,33 @@
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import org.junit.runner.notification.RunListener;
 
+/**
+ * Wrapper class to run all JUnit tests for the DynamicArray project.
+ * 
+ * This class executes the DynamicArrayTest test suite and prints results
+ * in a readable format for Gradescope or command-line grading.
+ */
 public class RunTests {
 
+    /**
+     * Main method that runs the DynamicArrayTest JUnit tests.
+     *
+     * @param args command-line arguments (ignored)
+     */
     public static void main(String[] args) {
-        JUnitCore core = new JUnitCore();
-        core.addListener(new RunListener() {
-            @Override
-            public void testStarted(org.junit.runner.Description desc) {
-                System.out.println("Starting test: " + desc.getMethodName());
-            }
-            @Override
-            public void testFinished(org.junit.runner.Description desc) {
-                System.out.println("✅ Passed: " + desc.getMethodName());
-            }
-            @Override
-            public void testFailure(Failure failure) {
-                System.out.println("❌ Failed: " + failure.getDescription().getMethodName());
-                System.out.println("   ↳ " + failure.getMessage());
-            }
-        });
+        Result result = JUnitCore.runClasses(DynamicArrayTest.class);
 
-        Result result = core.run(DynamicArrayTest.class);
+        System.out.println("Ran " + result.getRunCount() + " tests, " +
+                "Failures: " + result.getFailureCount());
 
-        System.out.println("\n====================");
-        System.out.println("Summary:");
-        System.out.println("✔ Passed: " + (result.getRunCount() - result.getFailureCount()));
-        System.out.println("✘ Failed: " + result.getFailureCount());
-        System.out.println("⏱ Time:   " + result.getRunTime() + " ms");
-        System.out.println("====================");
-
-        if (result.wasSuccessful()) System.out.println("🎉 All tests passed!");
+        if (!result.wasSuccessful()) {
+            System.out.println("Failure details:");
+            for (Failure failure : result.getFailures()) {
+                System.out.println(failure.toString());
+            }
+        } else {
+            System.out.println("All tests passed successfully!");
+        }
     }
 }

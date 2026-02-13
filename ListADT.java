@@ -31,7 +31,7 @@ public interface ListADT<E> {
      *
      * @param index the position of the element to return
      * @return the element at the given index
-     * @throws IndexOutOfBoundsException if index < 0 or >= size()
+     * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size()
      */
     E get(int index);
 

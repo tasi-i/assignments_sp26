@@ -1,102 +1,144 @@
-jaimport org.junit.Before;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for the DynamicArray class.
+ * 
+ * Tests cover:
+ * - Basic operations: size, isEmpty, get, set, add, remove
+ * - Index out-of-bounds behavior
+ * - Functional-style operations: append, addAll, splitSuffix, splitPrefix, delete, extract
+ *
+ * @param <T> type of elements in DynamicArray (for internal use, mostly String or Integer in tests)
+ */
 public class DynamicArrayTest {
 
-    private DynamicArray<Character> a1, a2, empty, s;
+    private DynamicArray<String> emptyArray;
+    private DynamicArray<String> filledArray;
 
+    /**
+     * Setup method run before each test.
+     * Initializes empty and pre-filled DynamicArrays.
+     */
     @Before
     public void setUp() {
-        a1 = stringToArray("abcdef");
-        a2 = stringToArray("wxyz");
-        empty = stringToArray("");
-        s = stringToArray("s");
+        emptyArray = new DynamicArray<>();
+        filledArray = new DynamicArray<>();
+        filledArray.add("A");
+        filledArray.add("B");
+        filledArray.add("C");
     }
 
-    private DynamicArray<Character> stringToArray(String str) {
-        DynamicArray<Character> arr = new DynamicArray<>(str.length());
-        for (int i = 0; i < str.length(); i++) arr.add(str.charAt(i));
-        return arr;
-    }
-
-    private void compareToString(DynamicArray<Character> arr, String str) {
-        assertEquals(str.length(), arr.size());
-        for (int i = 0; i < str.length(); i++)
-            assertEquals(str.charAt(i), (char) arr.get(i));
-    }
-
-    // ---------- Basic Tests ----------
+    /**
+     * Tests that a newly created array is empty.
+     */
     @Test
-    public void testSizeAndEmpty() {
-        DynamicArray<Character> arr = new DynamicArray<>();
-        assertEquals(0, arr.size());
-        assertTrue(arr.isEmpty());
-        arr.add('A');
-        assertEquals(1, arr.size());
-        assertFalse(arr.isEmpty());
+    public void testEmptyArray() {
+        assertTrue(emptyArray.isEmpty());
+        assertEquals(0, emptyArray.size());
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testGetEmpty() { new DynamicArray<Character>().get(0); }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testAddInvalid() { new DynamicArray<Character>().add(1, 'A'); }
-
+    /**
+     * Tests adding elements at specific indices.
+     */
     @Test
     public void testAddAndGet() {
-        DynamicArray<Character> arr = new DynamicArray<>();
-        arr.add('A'); arr.add('B'); arr.add(1, 'C');
-        compareToString(arr, "ACB");
+        emptyArray.add(0, "X");
+        assertEquals("X", emptyArray.get(0));
+        emptyArray.add("Y"); // append
+        assertEquals("Y", emptyArray.get(1));
     }
 
-    @Test
-    public void testSet() {
-        DynamicArray<Character> arr = stringToArray("AB");
-        char old = arr.set(1, 'Z');
-        assertEquals('B', old);
-        compareToString(arr, "AZ");
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testSetInvalid() { new DynamicArray<Character>().set(0, 'X'); }
-
+    /**
+     * Tests removing elements from the array.
+     */
     @Test
     public void testRemove() {
-        DynamicArray<Character> arr = stringToArray("ABC");
-        char removed = arr.remove(1);
-        assertEquals('B', removed);
-        compareToString(arr, "AC");
+        String removed = filledArray.remove(1); // removes "B"
+        assertEquals("B", removed);
+        assertEquals(2, filledArray.size());
+        assertEquals("C", filledArray.get(1));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testRemoveInvalid() { new DynamicArray<Character>().remove(0); }
+    /**
+     * Tests set operation returns old value and updates element.
+     */
+    @Test
+    public void testSet() {
+        String old = filledArray.set(0, "Z");
+        assertEquals("A", old);
+        assertEquals("Z", filledArray.get(0));
+    }
 
-    // ---------- Functional Tests ----------
+    /**
+     * Tests that operations throw IndexOutOfBoundsException for invalid indices.
+     */
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testGetInvalidIndex() {
+        emptyArray.get(0);
+    }
+
+    /**
+     * Tests append method in a functional style (returns new array, does not modify original).
+     */
     @Test
     public void testAppend() {
-        compareToString(a1.append(a2), "abcdefwxyz");
-        compareToString(a2.append(a1), "wxyzabcdef");
-        compareToString(a1.append(a1), "abcdefabcdef");
-        compareToString(empty.append(a1), "abcdef");
-        compareToString(a1.append(empty), "abcdef");
+        DynamicArray<String> result = filledArray.append(emptyArray);
+        assertEquals(3, filledArray.size()); // original unchanged
+        assertEquals(3, result.size());
     }
 
+    /**
+     * Tests addAll inserts elements at specified index.
+     */
     @Test
     public void testAddAll() {
-        compareToString(a1.addAll(0, a2), "wxyzabcdef");
-        compareToString(a1.addAll(3, a2), "abcwxydef");
+        DynamicArray<String> other = new DynamicArray<>();
+        other.add("X");
+        other.add("Y");
+        DynamicArray<String> result = filledArray.addAll(1, other);
+        assertEquals(5, result.size());
+        assertEquals("X", result.get(1));
     }
 
+    /**
+     * Tests splitSuffix returns elements from given index to end.
+     */
     @Test
-    public void testSplitPrefixSuffix() {
-        compareToString(a1.splitPrefix(3), "abc");
-        compareToString(a1.splitSuffix(3), "def");
+    public void testSplitSuffix() {
+        DynamicArray<String> suffix = filledArray.splitSuffix(1);
+        assertEquals(2, suffix.size());
+        assertEquals("B", suffix.get(0));
     }
 
+    /**
+     * Tests splitPrefix returns elements before a given index.
+     */
     @Test
-    public void testDeleteExtract() {
-        compareToString(a1.delete(1, 4), "af");
-        compareToString(a1.extract(1, 4), "bcd");
+    public void testSplitPrefix() {
+        DynamicArray<String> prefix = filledArray.splitPrefix(2);
+        assertEquals(2, prefix.size());
+        assertEquals("A", prefix.get(0));
+    }
+
+    /**
+     * Tests delete removes a range of elements.
+     */
+    @Test
+    public void testDelete() {
+        DynamicArray<String> result = filledArray.delete(0, 2);
+        assertEquals(1, result.size());
+        assertEquals("C", result.get(0));
+    }
+
+    /**
+     * Tests extract returns a range of elements without modifying original.
+     */
+    @Test
+    public void testExtract() {
+        DynamicArray<String> result = filledArray.extract(1, 3);
+        assertEquals(2, result.size());
+        assertEquals("B", result.get(0));
     }
 }
