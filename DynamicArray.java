@@ -225,15 +225,15 @@ public class DynamicArray<T> implements ListADT<T> {
         return result;
     }
 
-    /** Returns a new DynamicArray containing elements from index to end */
-    public DynamicArray<T> splitSuffix(int fromIndex) {
-        checkIndex(fromIndex);
-        DynamicArray<T> result = new DynamicArray<>(size - fromIndex);
-        for (int i = fromIndex; i < size; i++) result.add(data[i]);
-        return result;
-    }
-
-    /** Returns a new DynamicArray containing elements from start to index (exclusive) */
+    /**
+     * Returns a new DynamicArray containing elements from the beginning
+     * up to the specified index.
+     *
+     * @param toIndex the ending index (exclusive)
+     * @return a new DynamicArray containing the prefix
+     * @throws IndexOutOfBoundsException if toIndex is less than 0
+     *         or greater than size()
+ */
     public DynamicArray<T> splitPrefix(int toIndex) {
         if (toIndex < 0 || toIndex > size) throw new IndexOutOfBoundsException();
         DynamicArray<T> result = new DynamicArray<>(toIndex);
@@ -241,7 +241,47 @@ public class DynamicArray<T> implements ListADT<T> {
         return result;
     }
 
-    /** Returns a new DynamicArray with elements [fromIndex, toIndex) removed */
+    /**
+     * Returns a new DynamicArray containing elements from the specified index
+     * to the end of the array.
+     *
+     * @param fromIndex the starting index (inclusive)
+     * @return a new DynamicArray containing the suffix
+     * @throws IndexOutOfBoundsException if fromIndex is less than 0
+     *         or greater than size()
+     */
+    public DynamicArray<T> splitSuffix(int fromIndex) {
+        checkIndex(fromIndex);
+        DynamicArray<T> result = new DynamicArray<>(size - fromIndex);
+        for (int i = fromIndex; i < size; i++) result.add(data[i]);
+        return result;
+    }
+
+    /** 
+        * Returns a new DynamicArray containing elements from the beginning
+        * up to the specified index.
+        *
+        * @param toIndex the ending index (exclusive)
+        * @return a new DynamicArray containing the prefix
+        * @throws IndexOutOfBoundsException if toIndex is less than 0
+        *         or greater than size()
+        */
+    public DynamicArray<T> splitPrefix(int toIndex) {
+        if (toIndex < 0 || toIndex > size) throw new IndexOutOfBoundsException();
+        DynamicArray<T> result = new DynamicArray<>(toIndex);
+        for (int i = 0; i < toIndex; i++) result.add(data[i]);
+        return result;
+    }
+
+    /**
+     * Returns a new DynamicArray with elements in the range
+     * [fromIndex, toIndex) removed.
+     *
+     * @param fromIndex the starting index (inclusive)
+     * @param toIndex the ending index (exclusive)
+     * @return a new DynamicArray with the specified range removed
+     * @throws IndexOutOfBoundsException if indices are invalid
+     */
     public DynamicArray<T> delete(int fromIndex, int toIndex) {
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) throw new IndexOutOfBoundsException();
         DynamicArray<T> result = new DynamicArray<>(size - (toIndex - fromIndex));
@@ -250,7 +290,13 @@ public class DynamicArray<T> implements ListADT<T> {
         return result;
     }
 
-    /** Returns a new DynamicArray containing elements [fromIndex, toIndex) */
+    /**
+     * Returns a new DynamicArray containing elements [fromIndex, toIndex)
+     * @param fromIndex the starting index (inclusive)
+     * @param toIndex the ending index (exclusive)
+     * @return a new DynamicArray with the specified range
+     * @throws IndexOutOfBoundsException if indices are invalid
+     */
     public DynamicArray<T> extract(int fromIndex, int toIndex) {
         if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) throw new IndexOutOfBoundsException();
         DynamicArray<T> result = new DynamicArray<>(toIndex - fromIndex);
