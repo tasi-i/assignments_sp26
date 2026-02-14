@@ -82,7 +82,7 @@ public class DynamicArray<T> implements ListADT<T> {
      *
      * @param index the index to retrieve
      * @return the element at the given index
-     * @throws IndexOutOfBoundsException if index &lt; 0 or &gt;= size
+     * @throws IndexOutOfBoundsException if index is less than 0 or greater than or equal to size()
      */
     @Override
     public T get(int index) {
@@ -195,8 +195,13 @@ public class DynamicArray<T> implements ListADT<T> {
         }
     }
 
-    // Group 3 methods (functional-style) — append, addAll, splitSuffix, splitPrefix, delete, extract
-    /** Returns a new DynamicArray that appends another array to this one */
+    /**
+     * Returns a new DynamicArray with all elements of this array followed by
+     * all elements of the other array. The current array is not modified.
+     *
+     * @param other the DynamicArray to append
+     * @return a new DynamicArray containing all elements of this array followed by other
+     */
     public DynamicArray<T> append(DynamicArray<T> other) {
         DynamicArray<T> result = new DynamicArray<>(this.size + other.size);
         for (int i = 0; i < size; i++) result.add(data[i]);
@@ -204,7 +209,14 @@ public class DynamicArray<T> implements ListADT<T> {
         return result;
     }
 
-    /** Returns a new DynamicArray that inserts another array at index */
+    /**
+     * Returns a new DynamicArray with all elements of the other array inserted
+     * at the specified index. The current array is not modified.
+     *
+     * @param index the index at which to insert the other array
+     * @param other the DynamicArray to insert
+     * @return a new DynamicArray with the elements inserted
+    */
     public DynamicArray<T> addAll(int index, DynamicArray<T> other) {
         DynamicArray<T> result = new DynamicArray<>(this.size + other.size);
         for (int i = 0; i < index; i++) result.add(data[i]);
